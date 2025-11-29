@@ -1,0 +1,76 @@
+/* ===================================================================
+   BACKEND INTEGRATION GUIDE — NotificationsPage.jsx
+   ===================================================================
+   PURPOSE:
+   Shows grouped notification types:
+     • bid updates
+     • milestone updates
+     • reviews
+   Currently uses a hardcoded `items` list and updates it locally.
+
+   ===================================================================
+   REQUIRED API ENDPOINTS
+   ===================================================================
+   1) GET /api/notifications
+      Should return:
+      [
+        {
+          id,
+          type: "bid" | "milestone" | "review",
+          title,
+          meta,
+          time,
+          read: boolean
+        }
+      ]
+
+   2) POST /api/notifications/mark-all-read
+
+   3) POST /api/notifications/:id/mark-read
+
+   4) Realtime optional (WebSocket or SSE):
+      - push new bid updates
+      - push milestone status changes
+
+   ===================================================================
+   FRONTEND CHANGES REQUIRED
+   ===================================================================
+   1) Replace local `items` useState with:
+        const [items, setItems] = useState([]);
+        useEffect(() => {
+          fetch("/api/notifications")
+            .then(r => r.json())
+            .then(setItems);
+        }, []);
+
+   2) Mark all as read:
+        fetch("/api/notifications/mark-all-read", { method: "POST" })
+          .then(() => reload notifications);
+
+   3) When updating a bid notification:
+        Replace local update with backend:
+          fetch(`/api/notifications/${id}/mark-read`, { method: "POST" })
+
+   4) Live updates:
+        If using WebSockets, update `items` in real time.
+
+   ===================================================================
+   DATA SHAPE EXPECTATIONS
+   ===================================================================
+   Each notification MUST include:
+     • id
+     • type ("bid" | "milestone" | "review")
+     • title
+     • meta (extra detail)
+     • time ("2h ago" or timestamp)
+     • read (boolean)
+
+   ===================================================================
+   SUMMARY
+   ===================================================================
+   ✔ Replace all hardcoded notifications  
+   ✔ Add endpoints for marking read vs unread  
+   ✔ Optional realtime support for instant updates  
+   ✔ UI logic remains unchanged — only data becomes dynamic
+
+*/

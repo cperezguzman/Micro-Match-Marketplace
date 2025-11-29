@@ -1,0 +1,84 @@
+/* ================================================================
+   BACKEND INTEGRATION GUIDE — CreateProject.jsx
+   ================================================================
+   PURPOSE:
+   This page collects:
+     • Project title
+     • Description
+     • Type
+     • Location
+     • Budget min/max
+     • Deadline
+     • Required skills
+     • Milestones (with due dates)
+     • Attachments
+
+   Everything is currently frontend-only.
+
+   ================================================================
+   REQUIRED API ENDPOINTS
+   ================================================================
+   1) POST /api/projects
+      Body structure:
+      {
+        title,
+        description,
+        type,
+        location,
+        budgetMin,
+        budgetMax,
+        deadline,
+        skills: [],
+        milestones: [
+          { id, title, due }
+        ],
+        attachments: [uploadedFileURLs]
+      }
+
+   2) POST /api/upload
+      For handling every file dropped/uploaded.
+      Should return a public URL:
+      { url: "https://cdn/.../file.pdf" }
+
+   ================================================================
+   FRONTEND CHANGES REQUIRED
+   ================================================================
+   1) Replace dummy state-only submission with:
+        async function handleSubmit() {
+          const uploadURLs = [];
+          for (const file of attachedFiles) {
+            const formData = new FormData();
+            formData.append("file", file);
+            const res = await fetch("/api/upload", { method: "POST", body: formData });
+            const { url } = await res.json();
+            uploadURLs.push(url);
+          }
+
+          const payload = { ...allFields, attachments: uploadURLs };
+
+          await fetch("/api/projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        }
+
+   2) Milestones must be sent in the shape expected by backend.
+
+   3) Backend should generate unique milestone IDs if not included.
+
+   ================================================================
+   DATA SHAPE EXPECTATIONS
+   ================================================================
+   Skills: array of strings  
+   Milestones: array of { title, due }  
+   Attachments: array of URLs strings
+
+   ================================================================
+   SUMMARY
+   ================================================================
+   ✔ Convert form → API submit  
+   ✔ Upload attachments first  
+   ✔ Send structured payload to backend
+
+*/

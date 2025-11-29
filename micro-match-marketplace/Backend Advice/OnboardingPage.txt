@@ -1,0 +1,69 @@
+/* ===================================================================
+   BACKEND INTEGRATION GUIDE — OnboardingWizard.jsx
+   ===================================================================
+   PURPOSE:
+   Collects:
+     • role ("Client" or "Contributor")
+     • skills[]
+     • experience level
+   and updates the user's profile.
+
+   Currently:
+     • Stores all onboarding info only in AuthContext.
+     • Does NOT persist to backend.
+
+   ===================================================================
+   REQUIRED API ENDPOINT
+   ===================================================================
+   POST /api/user/onboarding
+   Body:
+     {
+       role: "Client" | "Contributor",
+       skills: [...],
+       experienceLevel: "Student / Junior" | "Intermediate" | "Senior / Experienced"
+     }
+
+   Response:
+     { user: updatedUserObject }
+
+   ===================================================================
+   FRONTEND CHANGES REQUIRED
+   ===================================================================
+   1) Replace final local save with backend call:
+
+        async function handleFinish() {
+          const payload = { role, skills, experienceLevel: experience };
+
+          const res = await fetch("/api/user/onboarding", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          const { user } = await res.json();
+          setUser(user);        // update context
+          navigate("/dashboard");
+        }
+
+   2) Backend must:
+        • attach onboarding data to user profile
+        • set needsOnboarding = false
+
+   ===================================================================
+   DATA SHAPE EXPECTATIONS
+   ===================================================================
+   Updated user must include:
+     • activeRole
+     • skills[]
+     • experienceLevel
+     • needsOnboarding: false
+
+   ===================================================================
+   SUMMARY
+   ===================================================================
+   ✔ Replace client-only save with POST request  
+   ✔ Persist user onboarding info  
+   ✔ Continue to Dashboard after success  
+   ✔ No UI changes needed
+
+*/

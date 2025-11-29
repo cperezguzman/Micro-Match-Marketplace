@@ -1,0 +1,91 @@
+/**
+ * ────────────────────────────────────────────────────────────────
+ * BACKEND INTEGRATION GUIDE — ContributorAssignmentsPage.jsx
+ * ────────────────────────────────────────────────────────────────
+ * This page displays all projects assigned to the logged-in contributor,
+ * including each project's milestones. Currently the data is fully hard-coded.
+ * Follow the instructions below to connect this page to your backend.
+ *
+ * 1. AUTHENTICATION
+ *    - Ensure the user is logged in as a contributor.
+ *    - You will likely pass a JWT token in Authorization headers.
+ *
+ * 2. FETCH CONTRIBUTOR PROJECTS
+ *    Replace the `useState([...hardcoded...])` with a backend fetch call:
+ *
+ *    Example endpoint:
+ *       GET /api/contributors/:userId/projects
+ *
+ *    Expected backend response structure:
+ *    [
+ *      {
+ *        "id": 12,
+ *        "title": "...",
+ *        "summary": "...",
+ *        "client": "@Company",
+ *        "projectId": "#XXXX",
+ *        "milestones": [
+ *          {
+ *            "id": 3,
+ *            "title": "Wireframes",
+ *            "due": "2025-01-15",
+ *            "progress": 60
+ *          },
+ *          ...
+ *        ]
+ *      },
+ *      ...
+ *    ]
+ *
+ *    Replace hardcoded state with:
+ *
+ *       useEffect(() => {
+ *         fetch(`/api/contributors/${user.id}/projects`, {
+ *            headers: { Authorization: `Bearer ${token}` }
+ *         })
+ *         .then(res => res.json())
+ *         .then(data => setProjects(data));
+ *       }, []);
+ *
+ * 3. MILESTONE PROGRESS VALUES
+ *    The frontend expects "progress" to be a number 0–100.
+ *    Your backend should calculate this from milestone submissions or status.
+ *
+ * 4. CLICKING A MILESTONE
+ *    When the user clicks a milestone, navigation occurs:
+ *
+ *       navigate(`/milestone-submit/${project.id}/${milestone.id}`)
+ *
+ *    This relies on your backend exposing:
+ *
+ *       GET /api/projects/:projectId/milestones/:milestoneId
+ *
+ * 5. PROJECT EXPANSION (ACCORDION)
+ *    No backend communication is needed — purely UI state.
+ *
+ * 6. OPTIONAL ENHANCEMENTS
+ *    - Replace "Contact Client" with a real chat system endpoint.
+ *    - Replace "View Project Chat" with a route like /project-chat/:projectId.
+ *
+ * 7. ERROR HANDLING
+ *    You may want to add:
+ *       - Loading spinners
+ *       - 404 handling for missing projects
+ *       - Unauthorized redirects
+ *
+ * ────────────────────────────────────────────────────────────────
+ * SUMMARY OF BACKEND DATA NEEDED
+ * ────────────────────────────────────────────────────────────────
+ * Contributor Project List:
+ *   GET /api/contributors/:userId/projects
+ *
+ * Single Project's Milestones:
+ *   GET /api/projects/:projectId/milestones
+ *
+ * Single Milestone Info (for clicking into submission page):
+ *   GET /api/projects/:projectId/milestones/:milestoneId
+ *
+ * ────────────────────────────────────────────────────────────────
+ * END OF BACKEND INTEGRATION NOTES
+ * ────────────────────────────────────────────────────────────────
+ */

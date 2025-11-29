@@ -1,0 +1,89 @@
+/* ================================================================
+   BACKEND INTEGRATION GUIDE — AssignmentPage.jsx
+   ================================================================
+   PURPOSE:
+   This page currently uses a hard-coded `projects` array that contains:
+     • project metadata
+     • assigned contributor
+     • milestones (with progress %)
+   When integrated with the backend, this page should load ALL projects
+   assigned to the logged-in client.
+
+   ================================================================
+   REQUIRED API ENDPOINTS
+   ================================================================
+   1) GET /api/projects/assigned
+      Returns every project belonging to the current client.
+      Example response:
+      [
+        {
+          id: 1,
+          title: "Mobile App UI Redesign",
+          summary: "...",
+          contributor: "@SchemaSquad",
+          projectId: "#1042",
+          status: "In Progress",
+          milestones: [
+            { id: 1, title: "Wireframe Draft", due: "2025-10-15", progress: 100 },
+            ...
+          ]
+        },
+        ...
+      ]
+
+   2) GET /api/projects/:projectId/milestones/:milestoneId
+      Used when clicking a milestone.
+      MilestoneDetailPage.jsx will use this.
+
+   3) POST /api/projects/:projectId/approve
+      Triggered when “Approve Project” is clicked.
+
+   4) POST /api/projects/:projectId/finalize
+      Triggered only if all milestones are complete.
+
+   5) POST /api/projects/:projectId/request-changes
+      Triggered when the user clicks "Request Changes".
+
+   ================================================================
+   FRONTEND CHANGES REQUIRED
+   ================================================================
+   1) Replace hard-coded `projects` with:
+        const [projects, setProjects] = useState([]);
+        useEffect(() => {
+          fetch("/api/projects/assigned")
+            .then(res => res.json())
+            .then(data => setProjects(data));
+        }, []);
+
+   2) Replace navigation event for milestone clicks:
+        navigate(`/milestone/${project.id}/${m.id}`);
+      No change needed — backend API will fuel details page.
+
+   3) Approval buttons should call backend:
+        fetch(`/api/projects/${project.id}/approve`, { method: "POST" })
+
+   4) Finalization button:
+        fetch(`/api/projects/${project.id}/finalize`, { method: "POST" })
+
+   ================================================================
+   DATA SHAPE EXPECTATIONS
+   ================================================================
+   Backend must ensure each project includes:
+     - id (number)
+     - title (string)
+     - summary (string)
+     - contributor (string or populated user object)
+     - projectId (string)
+     - status (string)
+     - milestones: [
+         { id, title, due, progress }
+       ]
+
+   ================================================================
+   SUMMARY
+   ================================================================
+   ✔ Convert hardcoded data → API fetch  
+   ✔ Provide approve / finalize / request-changes API  
+   ✔ Leave routing logic as-is (it already points to MilestoneDetail page)
+
+*/

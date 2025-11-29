@@ -1,0 +1,79 @@
+/* ================================================================
+   BACKEND INTEGRATION GUIDE — DashboardPage.jsx
+   ================================================================
+   PURPOSE:
+   This dashboard shows:
+     • Client/Contributor statistics
+     • Notifications
+     • Upcoming deadlines
+     • Message preview count
+   All currently mocked.
+
+   ================================================================
+   REQUIRED API ENDPOINTS
+   ================================================================
+   1) GET /api/dashboard/summary
+      Should return:
+      {
+        unreadMessages: number,
+        notifications: [
+          { id, subject, time }
+        ],
+        deadlines: [
+          { id, title, due }
+        ],
+        clientStats: {
+          total, completed, inProgress, pending
+        },
+        contributorStats: {
+          total, completed, inProgress, pending
+        }
+      }
+
+   2) GET /api/user/me
+      To get `user.activeRole`, name, etc.
+
+   ================================================================
+   FRONTEND CHANGES REQUIRED
+   ================================================================
+   1) Replace `notifications`, `mockDeadlines`, `clientProjects`
+      with data from backend.
+
+      Example:
+        useEffect(() => {
+          fetch("/api/dashboard/summary")
+            .then(r => r.json())
+            .then(data => {
+              setNotifications(data.notifications);
+              setDeadlines(data.deadlines);
+              setClientStats(data.clientStats);
+              setContributorStats(data.contributorStats);
+              setUnreadMessages(data.unreadMessages);
+            });
+        }, []);
+
+   2) Deadline sorting/filtering stays frontend-only.
+
+   3) Stats take backend data directly:
+      Backend should NOT send raw project lists — only the counts.
+
+   ================================================================
+   DATA SHAPE EXPECTATIONS
+   ================================================================
+   Notifications:
+     { id, subject, timestamp or "2h ago" }
+
+   Deadlines:
+     { id, title, due: "YYYY-MM-DD" }
+
+   Stats:
+     { total, completed, inProgress, pending }
+
+   ================================================================
+   SUMMARY
+   ================================================================
+   ✔ Replace all mock arrays with API data  
+   ✔ Dashboard becomes 100% dynamically driven  
+   ✔ Minimal code changes — mostly replacing dummy values
+
+*/

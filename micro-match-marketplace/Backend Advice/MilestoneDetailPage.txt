@@ -1,0 +1,89 @@
+/* ===================================================================
+   BACKEND INTEGRATION GUIDE — MilestoneDetailPage.jsx
+   ===================================================================
+   PURPOSE:
+   This page displays:
+     • milestone title, due date, status
+     • project contributor name
+     • deliverables list
+   Currently all data comes from hardcoded `projectData`
+   and `deliverablesByMilestoneId`.
+
+   ===================================================================
+   REQUIRED API ENDPOINTS
+   ===================================================================
+   1) GET /api/projects/:projectId/milestones/:milestoneId
+      Should return:
+      {
+        id,
+        title,
+        due,
+        status,
+        contributor,
+        projectTitle,
+        deliverables: [
+          { id, name, status }
+        ]
+      }
+
+   2) POST /api/projects/:projectId/milestones/:milestoneId/approve
+      Optional body:
+      { comments }
+
+   3) POST /api/projects/:projectId/milestones/:milestoneId/request-changes
+      Body:
+      { comments }
+
+   ===================================================================
+   FRONTEND CHANGES REQUIRED
+   ===================================================================
+   1) Remove all local mock objects.
+
+   2) Replace:
+        const project = projectData[projectId];
+        const milestone = project?.milestones[milestoneId];
+        const deliverables = deliverablesByMilestoneId[milestoneId];
+
+      With:
+        const [milestone, setMilestone] = useState(null);
+        useEffect(() => {
+          fetch(`/api/projects/${projectId}/milestones/${milestoneId}`)
+            .then(r => r.json())
+            .then(data => setMilestone(data));
+        }, []);
+
+   3) Approve button:
+        fetch(`/api/projects/${projectId}/milestones/${milestoneId}/approve`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ comments })
+        });
+
+   4) Request-changes button:
+        fetch(`/api/projects/${projectId}/milestones/${milestoneId}/request-changes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ comments })
+        });
+
+   ===================================================================
+   DATA SHAPE EXPECTATIONS
+   ===================================================================
+   Backend response must include:
+     • milestone.id
+     • milestone.title
+     • milestone.due
+     • milestone.status
+     • contributor (string or object)
+     • projectTitle
+     • deliverables[] (array of { id, name, status })
+
+   ===================================================================
+   SUMMARY
+   ===================================================================
+   ✔ Remove all local mocks  
+   ✔ Fetch milestone from backend  
+   ✔ Hook up Approve & Request Changes actions  
+   ✔ Deliverables must come from backend-defined milestone structure
+
+*/

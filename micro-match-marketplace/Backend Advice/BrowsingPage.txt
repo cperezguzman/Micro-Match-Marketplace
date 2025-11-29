@@ -1,0 +1,77 @@
+/* ================================================================
+   BACKEND INTEGRATION GUIDE — BrowsingPage.jsx (ProjectsPage)
+   ================================================================
+   PURPOSE:
+   This page shows all available projects that contributors may bid on.
+   Currently everything is hardcoded (`mockProjects`).
+
+   ================================================================
+   REQUIRED API ENDPOINTS
+   ================================================================
+   1) GET /api/projects/available
+      Returns projects that are open for bidding.
+      Example:
+      [
+        {
+          id: "1",
+          title: "...",
+          description: "...",
+          client: { name, initials, rating },
+          budgetMin: number,
+          budgetMax: number,
+          dueDate: "YYYY-MM-DD",
+          postedDate: "...",
+          tags: [],
+          type: "short term" | "long term"
+        }
+      ]
+
+   2) GET /api/projects/search?query=...
+      Used for implementing live search on title/description.
+
+   Note: If search is local-only, GET /available is enough.
+
+   ================================================================
+   FRONTEND CHANGES REQUIRED
+   ================================================================
+   1) Replace `mockProjects` with state + fetch:
+        const [projects, setProjects] = useState([]);
+        useEffect(() => {
+          fetch("/api/projects/available")
+            .then(res => res.json())
+            .then(data => setProjects(data));
+        }, []);
+
+   2) Budget formatting:
+      Backend should return numeric min/max values.
+      Frontend formats them:
+        `${proj.budgetMin} - ${proj.budgetMax}`
+
+   3) Clicking “Submit Bid” should navigate to PlaceBid + load project:
+        navigate(`/place-bid/${project.id}`);
+
+   ================================================================
+   FILTERS
+   ================================================================
+   Future features may require additional endpoints:
+     • GET /api/projects/filter?type=short
+     • GET /api/projects/sort?order=deadline
+     • GET /api/projects/tag/react-native
+
+   (Current UI has placeholders for these.)
+
+   ================================================================
+   DATA SHAPE EXPECTATIONS
+   ================================================================
+   Each project should include:
+     id, title, description, tags[], client{}, bidsCount, budgetMin, budgetMax,
+     dueDate, postedDate, type, location
+
+   ================================================================
+   SUMMARY
+   ================================================================
+   ✔ Replace mockProjects with backend fetch  
+   ✔ Optional search & filter endpoints  
+   ✔ Submit Bid → needs projectId passed via route
+
+*/

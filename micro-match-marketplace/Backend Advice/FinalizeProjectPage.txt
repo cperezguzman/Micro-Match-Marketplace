@@ -1,0 +1,63 @@
+/* ================================================================
+   BACKEND INTEGRATION GUIDE — FinalizeProjectPage.jsx
+   ================================================================
+   PURPOSE:
+   Allows client to:
+     • Leave a star rating
+     • Write a comment
+     • Finalize & close project
+
+   Currently uses mock project list & no backend submission.
+
+   ================================================================
+   REQUIRED API ENDPOINTS
+   ================================================================
+   1) GET /api/projects/:projectId
+      Returns project title + contributor info.
+
+   2) POST /api/projects/:projectId/review
+      Body:
+      {
+        rating: number 1–5,
+        comment: string
+      }
+
+   3) POST /api/projects/:projectId/finalize
+      Closes project & marks status as completed.
+
+   ================================================================
+   FRONTEND CHANGES REQUIRED
+   ================================================================
+   1) Replace local project array with:
+        const { projectId } = useParams();
+        useEffect(() => {
+          fetch(`/api/projects/${projectId}`)
+            .then(r => r.json())
+            .then(setProject);
+        }, []);
+
+   2) On submit:
+        fetch(`/api/projects/${projectId}/review`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rating, comment })
+        });
+
+        fetch(`/api/projects/${projectId}/finalize`, { method: "POST" });
+
+   3) Navigate to dashboard on success.
+
+   ================================================================
+   DATA SHAPE EXPECTATIONS
+   ================================================================
+   GET /api/projects/:id must return:
+      { id, title, contributor }
+
+   ================================================================
+   SUMMARY
+   ================================================================
+   ✔ Replace mock with API fetch  
+   ✔ Review & finalize use two POST calls  
+   ✔ No UI adjustments needed
+
+*/

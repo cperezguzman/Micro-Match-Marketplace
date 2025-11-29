@@ -1,0 +1,76 @@
+/* ===================================================================
+   BACKEND INTEGRATION GUIDE — LoginPage.jsx
+   ===================================================================
+   PURPOSE:
+   Authenticates a user and stores:
+     • name
+     • email
+     • role (Client/Contributor)
+     • onboarding state
+
+   Currently:
+     • Simulates login using a dummy "user" object.
+     • Does NOT check credentials.
+
+   ===================================================================
+   REQUIRED API ENDPOINTS
+   ===================================================================
+   POST /api/auth/login
+   Body:
+     { email, password }
+
+   Response:
+     {
+       token,
+       user: {
+         id,
+         name,
+         email,
+         activeRole,
+         needsOnboarding,
+         skills?,
+         experienceLevel?
+       }
+     }
+
+   ===================================================================
+   FRONTEND CHANGES REQUIRED
+   ===================================================================
+   1) Replace dummy login with real API request:
+
+        async function handleLogin(e) {
+          e.preventDefault();
+          const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+          });
+
+          const { token, user } = await res.json();
+          login(user, token); // store in AuthContext
+          navigate(user.needsOnboarding ? "/onboarding" : "/dashboard");
+        }
+
+   2) AuthContext must store token in:
+      • localStorage
+      • memory  
+      and attach Authorization headers on future requests.
+
+   ===================================================================
+   DATA SHAPE EXPECTATIONS
+   ===================================================================
+   Login response MUST include:
+     • full user object
+     • roles
+     • onboarding flag
+     • JWT or session token
+
+   ===================================================================
+   SUMMARY
+   ===================================================================
+   ✔ Remove fake login logic  
+   ✔ POST credentials → receive token + user  
+   ✔ Redirection logic stays the same  
+   ✔ AuthContext must store token & user securely
+
+*/

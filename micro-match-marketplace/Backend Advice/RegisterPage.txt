@@ -1,0 +1,67 @@
+/* ===================================================================
+   BACKEND INTEGRATION GUIDE — RegisterPage.jsx
+   ===================================================================
+   PURPOSE:
+   Creates a new account with:
+     • name
+     • email
+     • password
+   Currently:
+     • Calls register() from AuthContext without backend.
+     • Immediately redirects to onboarding.
+
+   ===================================================================
+   REQUIRED API ENDPOINT
+   ===================================================================
+   POST /api/auth/register
+   Body:
+     { name, email, password }
+
+   Example response:
+     {
+       user: { id, name, email, activeRole: null },
+       token
+     }
+
+   ===================================================================
+   FRONTEND CHANGES REQUIRED
+   ===================================================================
+   1) Replace Context-only registration with API call:
+
+        async function handleRegister(e) {
+          e.preventDefault();
+
+          const res = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password })
+          });
+
+          const { user, token } = await res.json();
+          register(user, token);   // store in AuthContext
+          navigate("/onboarding");
+        }
+
+   2) Backend must enforce:
+        • email uniqueness
+        • password hashing
+        • validation
+
+   ===================================================================
+   DATA SHAPE EXPECTATIONS
+   ===================================================================
+   User returned MUST include:
+     • id
+     • name
+     • email
+     • needsOnboarding = true
+
+   ===================================================================
+   SUMMARY
+   ===================================================================
+   ✔ Add API call  
+   ✔ Store returned user in context  
+   ✔ Redirect to onboarding  
+   ✔ Remove dummy register()
+
+*/

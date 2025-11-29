@@ -1,0 +1,124 @@
+/**
+ * ────────────────────────────────────────────────────────────────
+ * BACKEND INTEGRATION GUIDE — MilestoneSubmitPage.jsx
+ * ────────────────────────────────────────────────────────────────
+ * This page allows a contributor to view milestone requirements,
+ * upload deliverable files, write notes, and submit a milestone.
+ * All values are currently hard-coded and must be replaced with real data.
+ *
+ * 1. FETCH MILESTONE DATA
+ *    Replace the hardcoded `setMilestone({...})` inside useEffect with:
+ *
+ *       useEffect(() => {
+ *         fetch(`/api/projects/${projectId}/milestones/${milestoneId}`, {
+ *            headers: { Authorization: `Bearer ${token}` }
+ *         })
+ *         .then(res => res.json())
+ *         .then(data => setMilestone(data));
+ *       }, [projectId, milestoneId]);
+ *
+ *    Expected backend response example:
+ *    {
+ *      "id": 3,
+ *      "title": "Prototype Delivery",
+ *      "description": "...",
+ *      "due": "2025-10-22",
+ *      "progress": 60,
+ *      "deliverables": [
+ *        { "id": 1, "name": "Prototype Link", "required": true },
+ *        { "id": 2, "name": "Design Explanation", "required": false }
+ *      ]
+ *    }
+ *
+ * 2. FILE UPLOAD HANDLING
+ *    Files selected via <input type="file" /> are stored in the `files` array.
+ *
+ *    BACKEND REQUIREMENTS:
+ *      - A file upload endpoint that accepts multipart/form-data.
+ *      - Endpoint example:
+ *            POST /api/uploads
+ *            body: form-data ("files": [...])
+ *
+ *    The server should respond with uploaded-file URLs:
+ *    [
+ *      "https://cdn.server.com/uploads/file1.png",
+ *      "https://cdn.server.com/uploads/file2.pdf"
+ *    ]
+ *
+ * 3. SUBMIT MILESTONE (FILES + NOTES + METADATA)
+ *
+ *    Replace handleSubmit() with:
+ *
+ *       async function handleSubmit() {
+ *         setLoading(true);
+ *
+ *         // 1) Upload files
+ *         const formData = new FormData();
+ *         files.forEach(file => formData.append("files", file));
+ *
+ *         const uploadRes = await fetch("/api/uploads", {
+ *           method: "POST",
+ *           body: formData,
+ *           headers: { Authorization: `Bearer ${token}` }
+ *         });
+ *
+ *         const uploadedUrls = await uploadRes.json();
+ *
+ *         // 2) Submit milestone
+ *         await fetch(`/api/projects/${projectId}/milestones/${milestoneId}/submit`, {
+ *           method: "POST",
+ *           headers: {
+ *             "Content-Type": "application/json",
+ *             Authorization: `Bearer ${token}`
+ *           },
+ *           body: JSON.stringify({
+ *             files: uploadedUrls,
+ *             notes: notes
+ *           })
+ *         });
+ *
+ *         navigate("/contributor-assignments");
+ *       }
+ *
+ *    The backend should:
+ *      - Validate required deliverables
+ *      - Store file URLs
+ *      - Store notes
+ *      - Update milestone progress to 100%
+ *      - Mark milestone as "Submitted"
+ *
+ * 4. ERROR HANDLING
+ *    Recommended backend behaviors:
+ *      - 400 if required files are missing
+ *      - 401 if contributor is not assigned to the project
+ *      - 404 if milestone does not exist
+ *      - 500 for server issues
+ *
+ *    Recommended frontend behaviors:
+ *      - Show "Upload failed" messages
+ *      - Disable button while loading
+ *      - Allow retry
+ *
+ * 5. OPTIONAL ENHANCEMENTS
+ *    - Add preview thumbnails for uploaded images
+ *    - Add ability to delete files before submitting
+ *    - Show previous submission history
+ *    - Display reviewer feedback if milestone was rejected
+ *
+ * ────────────────────────────────────────────────────────────────
+ * SUMMARY OF BACKEND ENDPOINTS NEEDED
+ * ────────────────────────────────────────────────────────────────
+ *
+ * GET milestone data:
+ *    /api/projects/:projectId/milestones/:milestoneId
+ *
+ * POST file upload:
+ *    /api/uploads
+ *
+ * POST milestone submission:
+ *    /api/projects/:projectId/milestones/:milestoneId/submit
+ *
+ * ────────────────────────────────────────────────────────────────
+ * END OF BACKEND INTEGRATION NOTES
+ * ────────────────────────────────────────────────────────────────
+ */

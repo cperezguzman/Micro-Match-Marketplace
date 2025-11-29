@@ -1,0 +1,76 @@
+/* ===================================================================
+   BACKEND INTEGRATION GUIDE — PlaceBid.jsx
+   ===================================================================
+   PURPOSE:
+   Allows a contributor to submit:
+     • bid amount
+     • delivery timeline (days)
+     • approach & methodology
+     • messaging to the client
+     • optional breakdown of timeline
+
+   Currently:
+     • Project details (budget, deadline, skills) are hardcoded.
+     • Submitted bid logs to console.
+
+   ===================================================================
+   REQUIRED API ENDPOINTS
+   ===================================================================
+   1) GET /api/projects/:projectId
+      Used to display real project info instead of the hardcoded demo.
+
+   2) POST /api/projects/:projectId/bids
+      Body:
+      {
+        amount: number,
+        deliveryDays: number,
+        timeline: string,
+        approach: string,
+        message: string
+      }
+
+   ===================================================================
+   FRONTEND CHANGES REQUIRED
+   ===================================================================
+   1) Replace static project card with backend fetch:
+        const { projectId } = useParams();
+        const [project, setProject] = useState(null);
+
+        useEffect(() => {
+          fetch(`/api/projects/${projectId}`)
+            .then(r => r.json())
+            .then(setProject);
+        }, []);
+
+   2) Replace console.log with actual API call:
+        async function handleSubmit(e) {
+          e.preventDefault();
+          await fetch(`/api/projects/${projectId}/bids`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+          });
+          navigate(`/project/${projectId}`);
+        }
+
+   3) backend must store:
+        • contributorId (from auth token)
+        • projectId
+        • bid details
+        • timestamps
+
+   ===================================================================
+   DATA SHAPE EXPECTATIONS
+   ===================================================================
+   Project fetch must return:
+     { title, description, skills[], budgetMin, budgetMax, deadline, bidsCount }
+
+   ===================================================================
+   SUMMARY
+   ===================================================================
+   ✔ Replace static project preview with real GET /project  
+   ✔ Submit bid via POST /bids  
+   ✔ Navigation stays the same  
+   ✔ No other UI changes required
+
+*/

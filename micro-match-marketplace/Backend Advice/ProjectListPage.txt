@@ -1,0 +1,63 @@
+/* ================================================================
+   BACKEND INTEGRATION GUIDE — ProjectListPage.jsx
+   ================================================================
+   PURPOSE:
+   Displays either:
+     • All projects posted by the client
+     • All projects the contributor has bid on
+   Currently based on hard-coded arrays.
+
+   ================================================================
+   REQUIRED API ENDPOINTS
+   ================================================================
+   1) GET /api/projects/posted
+      When user.role === "Client"
+      Returns every project created by the client.
+
+   2) GET /api/projects/my-bids
+      When user.role === "Contributor"
+      Returns:
+        [
+          {
+            id,
+            title,
+            budget,
+            myBidAmount,
+            hasBid: true
+          }
+        ]
+
+   ================================================================
+   FRONTEND CHANGES REQUIRED
+   ================================================================
+   1) Remove hardcoded arrays.
+   2) Add dynamic role-based loading:
+
+        useEffect(() => {
+          const endpoint = role === "Client"
+            ? "/api/projects/posted"
+            : "/api/projects/my-bids";
+
+          fetch(endpoint)
+            .then(res => res.json())
+            .then(data => setProjects(data));
+        }, [role]);
+
+   3) “View Details” should route to:
+        /project-details/:id
+      And that page loads the full project.
+
+   ================================================================
+   DATA SHAPE EXPECTATIONS
+   ================================================================
+   Each project must include:
+     id, title, budget, postedDate, bidCount (optional), etc.
+
+   ================================================================
+   SUMMARY
+   ================================================================
+   ✔ API-driven replacement of dummy objects  
+   ✔ Role-based endpoint selection  
+   ✔ No UI refactor needed
+
+*/

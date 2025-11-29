@@ -1,0 +1,88 @@
+/* ================================================================
+   BACKEND INTEGRATION GUIDE — MessagePage.jsx
+   ================================================================
+   PURPOSE:
+   Fully functional messenger UI:
+     • Chat list
+     • Messages
+     • Message sending
+     • File attachments
+   Currently completely hardcoded.
+
+   ================================================================
+   REQUIRED API ENDPOINTS
+   ================================================================
+   1) GET /api/messages/chats
+      Returns:
+      [
+        {
+          id,
+          recipientName,
+          project,
+          unreadCount,
+          lastMessagePreview,
+        }
+      ]
+
+   2) GET /api/messages/chat/:chatId
+      Returns:
+      {
+        chatId,
+        messages: [
+          { sender, text, files[], timestamp }
+        ]
+      }
+
+   3) POST /api/messages/chat/:chatId/send
+      Body:
+      {
+        text,
+        files: [uploadedURLs]
+      }
+
+   4) POST /api/upload
+      For attachments.
+
+   ================================================================
+   FRONTEND CHANGES REQUIRED
+   ================================================================
+   1) Replace the local `chats` array:
+        useEffect(() => {
+          fetch("/api/messages/chats")
+            .then(r => r.json())
+            .then(setChats);
+        }, []);
+
+   2) When selecting a chat:
+        fetch(`/api/messages/chat/${id}`)
+          .then(r => r.json())
+          .then(setMessages);
+
+   3) Sending a message:
+        • Upload files first
+        • Then POST:
+            fetch(`/api/messages/chat/${activeChatId}/send`, {
+              method: "POST",
+              body: JSON.stringify({ text, files: uploadedURLs })
+            })
+
+   4) Remove local state for message history syncing.
+
+   ================================================================
+   DATA SHAPE EXPECTATIONS
+   ================================================================
+   Chat object:
+     { id, name, project, unread }
+
+   Message object:
+     { sender, text, files, time }
+
+   ================================================================
+   SUMMARY
+   ================================================================
+   ✔ Replace all local state with API calls  
+   ✔ Integrate upload service  
+   ✔ Add message refresh on new send  
+   ✔ UI remains unchanged
+
+*/
