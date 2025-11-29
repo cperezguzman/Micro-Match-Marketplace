@@ -1,0 +1,33 @@
+// Instructions On How to Use Git to Develop DB Final Project App
+# 1. Make sure you are on main and up-to-date
+git checkout main
+git pull origin main
+
+# 2. Create a development branch (from main) and switch to it
+git checkout -b dev
+git push -u origin dev
+
+# Now you have main (stable) and dev (integration) branches
+
+# 3. Whenever you start a new feature, create a feature branch based on dev
+git checkout dev
+git checkout -b feature/your-feature-name         # e.g. feature/profile-page
+
+# 4. Work on your feature: edit files, add, commit
+git add .
+git commit -m "Add profile page and related components"
+
+# 5. Push your feature branch to remote (so it’s backed up / shareable)
+git push -u origin feature/your-feature-name
+
+# 6. When feature is done and tested, switch back to dev
+git checkout dev
+git pull origin dev     # get latest changes in dev (if any)
+git merge feature/your-feature-name   # merge feature branch into dev
+git push origin dev
+
+# 7. Once several features in dev are stable and tested, merge dev into main
+git checkout main
+git pull origin main    # ensure main is up-to-date
+git merge dev
+git push origin main
