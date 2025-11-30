@@ -48,10 +48,6 @@ GRANT SELECT ON micro_match.skill           TO 'mm_client'@'localhost';
 GRANT SELECT ON micro_match.user_skill      TO 'mm_client'@'localhost';
 GRANT SELECT ON micro_match.project_skill   TO 'mm_client'@'localhost';
 
--- Required REVOKE (least privilege)
-GRANT DELETE ON micro_match.review TO 'mm_client'@'localhost';
-REVOKE DELETE ON micro_match.review FROM 'mm_client'@'localhost';
-
 
 -- 5. Contributor Role – Limited Privileges
 
@@ -74,10 +70,6 @@ GRANT SELECT ON micro_match.attachment    TO 'mm_contributor'@'localhost';
 GRANT SELECT ON micro_match.skill         TO 'mm_contributor'@'localhost';
 GRANT SELECT ON micro_match.user_skill    TO 'mm_contributor'@'localhost';
 GRANT SELECT ON micro_match.project_skill TO 'mm_contributor'@'localhost';
-
--- Required REVOKE
-GRANT DELETE ON micro_match.review TO 'mm_contributor'@'localhost';
-REVOKE DELETE ON micro_match.review FROM 'mm_contributor'@'localhost';
 
 
 -- 6. Admin Role – Full CRUD on Application Data
