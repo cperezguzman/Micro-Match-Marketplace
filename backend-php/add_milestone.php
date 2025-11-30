@@ -4,15 +4,14 @@
 // by DB triggers that use fn_project_deadline().
 
 header('Content-Type: application/json');
-session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Not logged in']);
-    exit;
-}
 
-require_once 'db.php';
+require 'db.php';
+require 'auth_check.php';
+
+// Only a Client can add milestones to their project
+require_role('Client');
+
 
 // 1. Read JSON body
 $body = file_get_contents('php://input');

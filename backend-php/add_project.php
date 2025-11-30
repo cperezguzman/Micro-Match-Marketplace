@@ -4,26 +4,23 @@
 
 header('Content-Type: application/json');
 
-// 1. Start session & enforce login
-session_start();
+// 1. bring in DB + auth helpers
+require 'db.php';
+require 'auth_check.php';
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Not logged in']);
-    exit;
-}
+// 2. enforce that only Clients can create projects
+require_role('Client');
 
-// 2. Connect to DB
-require_once 'db.php';
 
-// 3. Get client id from session
+
+// 4. Get client id from session
 $client_id = $_SESSION['user_id'];
 
-// 4. Read JSON body
+// 5. Read JSON body
 $body = file_get_contents('php://input');
 $data = json_decode($body, true);
 
-// 5. Extract and validate fields
+// 6. Extract and validate fields
 $title       = $data['title']       ?? null;
 $description = $data['description'] ?? null;
 $budget_min  = $data['budget_min']  ?? null;

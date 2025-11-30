@@ -4,23 +4,16 @@
 // this script calls stored procedure sp_on_bid_accepted()
 // which rejects other bids and ensures an assignment row exists.
 
+
 header('Content-Type: application/json');
-session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Not logged in']);
-    exit;
-}
 
-// Optional: only allow clients to accept/reject bids
-if (!isset($_SESSION['primary_role']) || $_SESSION['primary_role'] !== 'Client') {
-    http_response_code(403);
-    echo json_encode(['error' => 'Only clients can update bid status']);
-    exit;
-}
+require 'db.php';
+require 'auth_check.php';
 
-require_once 'db.php';
+// Only clients can update bid status
+require_role('Client');
+
 
 // 1. Read JSON body
 $body = file_get_contents('php://input');
