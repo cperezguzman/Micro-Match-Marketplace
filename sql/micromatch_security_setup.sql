@@ -5,23 +5,20 @@
 -- Use our  project database
 USE micro_match;
 
--- 1. Add password_hash column if missing
-ALTER TABLE user
-  ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255) NULL AFTER email;
 
--- 2. Create MySQL Accounts for Each Role
+-- 1. Create MySQL Accounts for Each Role
 CREATE USER IF NOT EXISTS 'mm_client'@'localhost'     IDENTIFIED BY 'clientpass';
 CREATE USER IF NOT EXISTS 'mm_contributor'@'localhost' IDENTIFIED BY 'contribpass';
 CREATE USER IF NOT EXISTS 'mm_admin'@'localhost'       IDENTIFIED BY 'adminpass';
 CREATE USER IF NOT EXISTS 'mm_dev'@'localhost'         IDENTIFIED BY 'devpass';
 
 
--- 3. Developer Role – Full Control
+-- 2. Developer Role – Full Control
 GRANT ALL PRIVILEGES ON micro_match.* TO 'mm_dev'@'localhost';
 
 
 
--- 4. Client Role – Limited Privileges
+-- 3. Client Role – Limited Privileges
 
 -- Projects
 GRANT SELECT, INSERT, UPDATE ON micro_match.project TO 'mm_client'@'localhost';
@@ -44,7 +41,7 @@ GRANT SELECT ON micro_match.user_skill      TO 'mm_client'@'localhost';
 GRANT SELECT ON micro_match.project_skill   TO 'mm_client'@'localhost';
 
 
--- 5. Contributor Role – Limited Privileges
+-- 4. Contributor Role – Limited Privileges
 
 -- View projects + users
 GRANT SELECT ON micro_match.project TO 'mm_contributor'@'localhost';
@@ -67,12 +64,12 @@ GRANT SELECT ON micro_match.user_skill    TO 'mm_contributor'@'localhost';
 GRANT SELECT ON micro_match.project_skill TO 'mm_contributor'@'localhost';
 
 
--- 6. Admin Role – Full CRUD on Application Data
+-- 5. Admin Role – Full CRUD on Application Data
 GRANT
     SELECT, INSERT, UPDATE, DELETE
 ON micro_match.*
 TO 'mm_admin'@'localhost';
 
 
--- 7. Apply Privilege Changes
+-- 6. Apply Privilege Changes
 FLUSH PRIVILEGES;
