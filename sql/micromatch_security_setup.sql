@@ -17,13 +17,8 @@ CREATE USER IF NOT EXISTS 'mm_dev'@'localhost'         IDENTIFIED BY 'devpass';
 
 
 -- 3. Developer Role – Full Control
-GRANT
-    SELECT, INSERT, UPDATE, DELETE,
-    CREATE, DROP, ALTER, INDEX,
-    CREATE ROUTINE, ALTER ROUTINE, EXECUTE,
-    CREATE TEMPORARY TABLES, TRIGGER
-ON micro_match.*
-TO 'mm_dev'@'localhost';
+GRANT ALL PRIVILEGES ON micro_match.* TO 'mm_dev'@'localhost';
+
 
 
 -- 4. Client Role – Limited Privileges
